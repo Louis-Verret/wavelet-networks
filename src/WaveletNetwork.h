@@ -15,6 +15,7 @@ public:
     WaveletNetwork(int nb_wavelons, int input_dim);
     ~WaveletNetwork();
 
+    void init(std::vector<Vector>& x, std::vector<double>& y);
     void fit(std::vector<Vector>& x, std::vector<double>& y, int epoch);
 
 protected:

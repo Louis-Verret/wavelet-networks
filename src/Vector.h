@@ -14,6 +14,9 @@ public:
     ~Vector();
 
     int getN() const { return m_n; };
+    std::vector<double> getCoefficients() const { return m_coefficients; };
+    void setCoefficients(std::vector<double> coefficients) { m_coefficients = coefficients; };
+
     double &operator()(int i);
     const double &operator()(int i) const;
 
