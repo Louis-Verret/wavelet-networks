@@ -13,7 +13,7 @@ public:
     ~Wavelon();
 
     double computeOutput(const Vector& x);
-    void updateParameters(const Vector& x, const double error);
+    void updateParameters(const Vector& x, const double error, const double learning_rate);
 
 protected:
 
@@ -23,7 +23,7 @@ protected:
     double m_w;
     WaveletFunction m_phi;
 
-    double m_z;
+    Vector m_z;
 
 };
 

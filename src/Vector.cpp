@@ -180,6 +180,36 @@ Vector Vector::sqrt() const {
     return res;
 }
 
+Vector Vector::inv() const {
+    Vector res(m_n);
+    #pragma omp parallel shared(res)
+    {
+        #pragma omp for
+        for (int i = 0; i < m_n; i++) {
+            if (m_coefficients[i] == 0) {
+                throw std::logic_error("Invalid Vector inv");
+            }
+            res(i) = 1.0/m_coefficients[i];
+        }
+    };
+    return res;
+}
+
+Matrix Vector::mult(const Vector& vec) const {
+    Matrix result(m_n, vec.getN());
+    int i, j;
+    #pragma omp parallel shared(result) private(i, j)
+    {
+        #pragma omp for
+        for (i = 0; i < m_n; i++) {
+            for (j = 0; j < m_n; j++) {
+                result(i, j) = m_coefficients[i] * vec(j);
+            }
+        }
+    }
+    return result;
+}
+
 Vector operator*(const double coeff, const Vector& v) {
     Vector res(v.getN());
     #pragma omp parallel shared(res, v)

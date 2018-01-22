@@ -16,6 +16,16 @@ double WaveletFunction::eval(const Vector& x) const {
     return res;
 }
 
-double WaveletFunction::evalDev(const Vector& x) const {
-
+Vector WaveletFunction::evalDev(const Vector& x) const {
+    Vector gradient(x.getN());
+    for (int i = 0; i<x.getN(); i++) {
+        if (x(i) != 0) {
+            gradient(i) = -(x(i) - 1.0/x(i)) * eval(x);
+        } else {
+            Vector x_tmp = x;
+            x_tmp(i) = 1;
+            gradient(i) = eval(x_tmp);
+        }
+    }
+    return gradient;
 }

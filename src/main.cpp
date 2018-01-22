@@ -16,7 +16,7 @@ int main(int argc, char **argv) {
     WaveletNetwork net(nb_wavelons, input_dim);
 
     net.init(x, y);
-    net.fit(x, y, 5);
+    net.fit(x, y, 0.001, 2000);
 
     return 0;
 }

@@ -4,6 +4,9 @@
 #include <vector>
 #include <cstdlib>
 #include <ostream>
+#include "Matrix.h"
+
+class Matrix;
 
 class Vector {
 public:
@@ -31,6 +34,8 @@ public:
     void fillRandomly();
     void fillWithZero();
     Vector sqrt() const;
+    Vector inv() const;
+    Matrix mult(const Vector& v) const;
 
 protected:
     int m_n;

@@ -7,6 +7,7 @@
 
 #include "Vector.h"
 
+class Vector;
 
 class Matrix {
 public:
@@ -37,6 +38,7 @@ public:
     double sumElem() const;
     void resize(int new_n, int new_m);
     static Matrix generateBitMatrix(int n, int m, double bit_rate);
+    static Matrix diag(const Vector& vec);
     Matrix sqrt() const;
     Matrix log() const;
     Matrix argmax() const;

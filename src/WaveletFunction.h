@@ -12,7 +12,7 @@ public:
     ~WaveletFunction();
 
     double eval(const Vector& x) const;
-    double evalDev(const Vector& x) const;
+    Vector evalDev(const Vector& x) const;
 
 };
 
