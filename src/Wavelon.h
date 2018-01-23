@@ -17,6 +17,8 @@ public:
 
     Vector getT() const { return m_t; };
     void setT(const Vector& t) { m_t = t; };
+    Matrix getD() const { return m_D; };
+    void setD(const Matrix& D) { m_D = D; };
 
 protected:
 

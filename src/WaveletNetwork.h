@@ -27,7 +27,7 @@ protected:
     double propagate(const Vector& x);
     void backpropagate(const Vector& x, const double error, const double learning_rate);
 
-    void recursively_init(std::vector<double>& x, std::vector<double>& y, Vector t_vec, Vector s_vec, int wavelon_index);
+    void recursively_init(std::vector<double>& xi, std::vector<double>& y, std::vector<double>& vec_s, std::vector<double>& vec_t);
 
 };
 
