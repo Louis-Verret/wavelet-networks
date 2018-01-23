@@ -2,12 +2,11 @@
 
 Wavelon::Wavelon(int input_dim) :
  m_D(input_dim, input_dim),
- m_R(input_dim, input_dim),
  m_t(input_dim),
  m_w(0),
  m_phi()
 {
-    m_R.fillRandomly();
+    m_R = Matrix::identity(input_dim, input_dim);
 }
 
 Wavelon::~Wavelon() {
@@ -15,8 +14,8 @@ Wavelon::~Wavelon() {
 }
 
 double Wavelon::computeOutput(const Vector& x) {
-    m_z = m_w * (m_D * m_R * (x - m_t));
-    return m_phi.eval(m_z);
+    m_z = m_D * m_R * (x - m_t);
+    return m_w * m_phi.eval(m_z);
 }
 
 void Wavelon::updateParameters(const Vector& x, const double error, const double learning_rate) {
@@ -27,6 +26,6 @@ void Wavelon::updateParameters(const Vector& x, const double error, const double
 
     m_w = m_w - learning_rate * delta_w;
     m_t = m_t - learning_rate * delta_t;
-    m_D = m_D - learning_rate * Matrix::diag(delta_s.inv());
+    m_D = (m_D.inv() - learning_rate * Matrix::diag(delta_s)).inv();
     m_R = m_R - learning_rate * delta_R;
 }

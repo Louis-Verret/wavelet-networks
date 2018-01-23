@@ -267,6 +267,24 @@ Matrix Matrix::log() const {
     return result;
 }
 
+Matrix Matrix::inv() const {
+    Matrix result(m_n, m_m);
+    int i, j;
+    #pragma omp parallel shared(result) private(i, j)
+    {
+        #pragma omp for collapse(2)
+        for (i = 0; i < m_n; i++) {
+            for (j = 0; j < m_m; j++) {
+                if (m_coefficients[i* m_m +j] == 0) {
+                    throw std::logic_error("Invalid Matrix inv");
+                }
+                result(i, j) = 1.0/m_coefficients[i * m_m + j];
+            }
+        }
+    }
+    return result;
+}
+
 Matrix Matrix::argmax() const {
     Matrix result(m_n, m_m);
     int i, j;
@@ -305,6 +323,25 @@ Matrix Matrix::generateBitMatrix(int n, int m, double bit_rate) {
             for (j =0; j<m; j++) {
                 double r = ((double) rand_r(&seed) / (double) RAND_MAX);
                 if (r < bit_rate) {
+                    result(i, j) = 1;
+                } else {
+                    result(i, j) = 0;
+                }
+            }
+        }
+    }
+    return result;
+}
+
+Matrix Matrix::identity(int n, int m) {
+    Matrix result(n, m);
+    int i, j;
+    #pragma omp parallel shared(result) private(i, j)
+    {
+        #pragma omp for collapse(2)
+        for (i = 0; i<n; i++) {
+            for (j =0; j<m; j++) {
+                if (i == j) {
                     result(i, j) = 1;
                 } else {
                     result(i, j) = 0;
