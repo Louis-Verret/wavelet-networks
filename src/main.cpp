@@ -11,12 +11,12 @@ int main(int argc, char **argv) {
 
     generateData(x, y, 100);
 
-    int nb_wavelons = 1;
+    int nb_wavelons = 4;
     int input_dim = 1;
-    WaveletNetwork net(nb_wavelons, input_dim);
+    WaveletNetwork net(input_dim, nb_wavelons);
 
     net.init(x, y);
-    net.fit(x, y, 5);
+    //net.fit(x, y, 5);
 
     return 0;
 }

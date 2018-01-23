@@ -15,6 +15,9 @@ public:
     double computeOutput(const Vector& x);
     void updateParameters(const Vector& x, const double error);
 
+    Vector getT() const { return m_t; };
+    void setT(const Vector& t) { m_t = t; };
+
 protected:
 
     Matrix m_D;
