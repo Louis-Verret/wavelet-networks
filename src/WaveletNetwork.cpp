@@ -101,13 +101,13 @@ void WaveletNetwork::init(std::vector<Vector>& x, std::vector<double>& y) {
 }
 
 
-void WaveletNetwork::fit(std::vector<Vector>& x, std::vector<double>& y, int epoch) {
+void WaveletNetwork::fit(std::vector<Vector>& x, std::vector<double>& y, const double learning_rate, int epoch) {
     for (int t = 0; t<epoch; t++) {
         double mse = 0;
         for (unsigned int i = 0; i<x.size(); i++) {
             double g = propagate(x[i]);
             double error = g - y[i];
-            backpropagate(x[i], error);
+            backpropagate(x[i], error, learning_rate);
             mse += std::pow(error, 2)/2.0;
         }
         std::cout << "Epoch: " << t+1 << "/" << epoch << std::endl;
@@ -124,8 +124,9 @@ double WaveletNetwork::propagate(const Vector& x) {
     return g + m_bar_g;
 }
 
-void WaveletNetwork::backpropagate(const Vector& x, const double error) {
+void WaveletNetwork::backpropagate(const Vector& x, const double error, const double learning_rate) {
     for (int i = 0; i<m_nb_wavelons; i++) {
-        m_wavelons[i]->updateParameters(x, error);
+        m_wavelons[i]->updateParameters(x, error, learning_rate);
     }
+    m_bar_g -= learning_rate * error;
 }

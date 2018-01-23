@@ -16,7 +16,7 @@ public:
     ~WaveletNetwork();
 
     void init(std::vector<Vector>& x, std::vector<double>& y);
-    void fit(std::vector<Vector>& x, std::vector<double>& y, int epoch);
+    void fit(std::vector<Vector>& x, std::vector<double>& y, const double learning_rate, int epoch);
 
 protected:
 
@@ -25,7 +25,7 @@ protected:
     int m_nb_wavelons;
 
     double propagate(const Vector& x);
-    void backpropagate(const Vector& x, const double error);
+    void backpropagate(const Vector& x, const double error, const double learning_rate);
 
     void recursively_init(std::vector<double>& x, std::vector<double>& y, Vector t_vec, Vector s_vec, int wavelon_index);
 

@@ -315,6 +315,20 @@ Matrix Matrix::generateBitMatrix(int n, int m, double bit_rate) {
     return result;
 }
 
+Matrix Matrix::diag(const Vector& vec) {
+    int n = vec.getN();
+    Matrix result(n, n);
+    int i;
+    #pragma omp parallel shared(result) private(i)
+    {
+        #pragma omp for
+        for (i = 0; i<n; i++) {
+            result(i, i) = vec(i);
+        }
+    }
+    return result;
+}
+
 void Matrix::fillRandomly() {
     int i;
     double weights_init;
