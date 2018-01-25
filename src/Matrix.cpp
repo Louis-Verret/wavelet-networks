@@ -231,6 +231,73 @@ Matrix Matrix::hadamardProduct(const Matrix &mat) const {
     return result;
 }
 
+Matrix Matrix::pow(int n) const {
+    if (m_n != m_m) {
+        throw std::logic_error("Invalid size for Matrix power");
+    }
+    Matrix result = identity(m_n, m_m);
+    for (int i = 0; i < n; i++) {
+        result = result * (*this);
+    }
+    return result;
+}
+
+double Matrix::normInf() const {
+    double max = 0;
+    for (int j = 0; j < m_m; j++) {
+        double sum = 0;
+        for (int i = 0; i < m_n; i++) {
+            sum += std::abs(m_coefficients[i * m_m + j]);
+        }
+        if (sum > max) {
+            max = sum;
+        }
+    }
+    return max;
+}
+
+Matrix Matrix::orthogonalization() const {
+    double epsilon  = 0.01;
+    bool sym = false;
+
+    Matrix transpose = this->transpose();
+    // std::cout << transpose << std::endl;
+    Matrix S = transpose * (*this);
+    //  std::cout << S << std::endl;
+    Matrix I = identity(m_n, m_m);
+    Matrix Delta = S - I;
+    // std::cout << Delta << std::endl;
+    double delta = Delta.normInf();
+    // std::cout << delta << std::endl;
+    Matrix T = I;
+    if (delta < epsilon) {
+        return *this;
+    }  else if (delta < 1) {
+        int k = 3;
+        for (int i = 1; i <= k; i++) {
+            T = T + std::pow(-1, i) * std::pow(i, -1/2) * Delta.pow(i);
+        }
+    } else {
+        double mu = std::sqrt(3 / delta);
+        T = (3 / 2) * mu * I - (1 / 2) * mu * mu * mu * S;
+        sym = true;
+    }
+    double delta_0 = delta;
+    while (delta > epsilon) {
+        Matrix Z = I - T * S * T;
+        delta = Z.normInf();
+        // std::cout << delta << std::endl;
+        if (delta >= delta_0) {
+            break;
+        }
+        T = (1 / 2) * T * (2 * I + Z);
+        if (sym) {
+            T = (1 / 2) * (T.transpose() + T);
+        }
+    }
+    return (*this) * T;
+}
+
 Matrix Matrix::sqrt() const {
     Matrix result(m_n, m_m);
     int i, j;
@@ -261,6 +328,24 @@ Matrix Matrix::log() const {
                     throw std::logic_error("Invalid Matrix log");
                 }
                 result(i, j) = std::log(m_coefficients[i * m_m + j]);
+            }
+        }
+    }
+    return result;
+}
+
+Matrix Matrix::inv() const {
+    Matrix result(m_n, m_m);
+    int i, j;
+    #pragma omp parallel shared(result) private(i, j)
+    {
+        #pragma omp for collapse(2)
+        for (i = 0; i < m_n; i++) {
+            for (j = 0; j < m_m; j++) {
+                if (m_coefficients[i* m_m +j] == 0) {
+                    throw std::logic_error("Invalid Matrix inv");
+                }
+                result(i, j) = 1.0/m_coefficients[i * m_m + j];
             }
         }
     }
@@ -305,6 +390,25 @@ Matrix Matrix::generateBitMatrix(int n, int m, double bit_rate) {
             for (j =0; j<m; j++) {
                 double r = ((double) rand_r(&seed) / (double) RAND_MAX);
                 if (r < bit_rate) {
+                    result(i, j) = 1;
+                } else {
+                    result(i, j) = 0;
+                }
+            }
+        }
+    }
+    return result;
+}
+
+Matrix Matrix::identity(int n, int m) {
+    Matrix result(n, m);
+    int i, j;
+    #pragma omp parallel shared(result) private(i, j)
+    {
+        #pragma omp for collapse(2)
+        for (i = 0; i<n; i++) {
+            for (j =0; j<m; j++) {
+                if (i == j) {
                     result(i, j) = 1;
                 } else {
                     result(i, j) = 0;

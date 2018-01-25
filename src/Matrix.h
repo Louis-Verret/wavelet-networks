@@ -39,10 +39,15 @@ public:
     void resize(int new_n, int new_m);
     static Matrix generateBitMatrix(int n, int m, double bit_rate);
     static Matrix diag(const Vector& vec);
+    static Matrix identity(int n, int m);
     Matrix sqrt() const;
     Matrix log() const;
+    Matrix inv() const;
     Matrix argmax() const;
     Matrix hadamardProduct(const Matrix &mat2) const;
+    Matrix pow(int n) const;
+    Matrix orthogonalization() const;
+    double normInf() const;
 
 protected:
     int m_n;

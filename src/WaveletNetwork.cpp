@@ -1,7 +1,6 @@
 #include "WaveletNetwork.h"
 #include "Utils.h"
-
-
+#include <queue>
 
 WaveletNetwork::WaveletNetwork() : m_bar_g(0) {
 }
@@ -19,85 +18,121 @@ WaveletNetwork::WaveletNetwork(int input_dim, int nb_wavelons) : m_bar_g(0), m_n
     }
 }
 
-void WaveletNetwork::recursively_init(std::vector<double>& xi, std::vector<double>& y, Vector t_vec, Vector s_vec, int wavelon_index) {
-    // insertion sort
-    int s = xi.size();
-    std::vector<double> sorted_y = y;
-    for (int j = 0; j < s; j++) {
-        double x = xi[j];
-        double y = sorted_y[j];
-        int k = j;
-        while (k > 0 and xi[k - 1] > x) {
-            xi[k] = xi[k - 1];
-            sorted_y[k] = sorted_y[k - 1];
-            k = k - 1;
+void WaveletNetwork::recursively_init(std::vector<double>& xi, std::vector<double>& y, std::vector<double>& vec_s, std::vector<double>& vec_t) {
+    std::queue<std::vector<double> > q_xi;
+    std::queue<std::vector<double> > q_y;
+    q_xi.push(xi);
+    q_y.push(y);
+    int l = 0;
+    while (q_xi.size() > 0) {
+        std::vector<double> sub_xi = q_xi.front();
+        std::vector<double> sub_y = q_y.front();
+        q_xi.pop(); q_y.pop();
+        int s = sub_xi.size();
+        //std::cout << l << " " << s << std::endl;
+        // derivative computation
+        std::vector<double> rhovar(s - 1);
+        for (int j = 0; j < s - 1; j++) {
+            rhovar[j] = std::abs((sub_y[j + 1] - sub_y[j]) / (sub_xi[j + 1] - sub_xi[j]));
+            // std::cout << xi[j] << std::endl;
+            // std::cout << sub_xi[j] << std::endl;
+            // std::cout << rhovar[j] << std::endl;
         }
-        xi[k] = x;
-        sorted_y[k] = y;
-    }
-    // derivative computation
-    std::vector<double> rhovar(s - 1);
-    for (int j = 0; j < s - 1; j++) {
-        rhovar[j] = std::abs((sorted_y[j + 1] - sorted_y[j]) / (xi[j + 1] - xi[j]));
-        // std::cout << xi[j] << std::endl;
-        // std::cout << rhovar[j] << std::endl;
-    }
-    //integral computation
-    double integral = 0;
-    for (int j = 0; j < s - 1; j++) {
-        integral += (xi[j + 1] - xi[j]) * rhovar[j];  
-        // std::cout << integral << std::endl;
-    }
-    //rhovar computation
-    std::vector<double> rho(s - 1);
-    for (int j = 0; j < s - 1; j++) {
-        rho[j] = rhovar[j] / integral;
-        // std::cout << rho[j] << std::endl;
-    }
-    //computing p
-    double p = 0;
-    for (int j = 0; j < s - 1; j++) {
-        p += (xi[j + 1] - xi[j])  * (xi[j] * rho[j]);
-        //std::cout << p << std::endl;
-    }
-    // parameters initialization
-    //t_vec(wavelon_index) = p;
-    //s_vec(wavelon_index) = 0.5 * (xi[s - 1] - xi[0]);
-
-    // spliting data in two
-    std::vector<double> left_xi; std::vector<double> right_xi;
-    std::vector<double> left_y; std::vector<double> right_y;
-    for (int j = 0; j < s; j++) {
-        if (xi[j] < p) {
-            left_xi.push_back(xi[j]);
-            left_y.push_back(y[j]);
+        //integral computation
+        double integral = 0;
+        for (int j = 0; j < s - 1; j++) {
+            integral += (sub_xi[j + 1] - sub_xi[j]) * rhovar[j];
+            // std::cout << integral << std::endl;
+        }
+        //rhovar computation
+        std::vector<double> rho(s - 1);
+        for (int j = 0; j < s - 1; j++) {
+            rho[j] = rhovar[j] / integral;
+            // std::cout << rho[j] << std::endl;
+        }
+        //computing p
+        double p = 0;
+        for (int j = 0; j < s - 1; j++) {
+            p += (sub_xi[j + 1] - sub_xi[j])  * (sub_xi[j] * rho[j]);
+            // std::cout << p << std::endl;
+        }
+        if (l < m_nb_wavelons) {
+            vec_t[l] = p;
+            vec_s[l] = 0.5 * (sub_xi[s - 1] - sub_xi[0]);
+            // spliting data in two
+            std::vector<double> left_xi; std::vector<double> right_xi;
+            std::vector<double> left_y; std::vector<double> right_y;
+            for (int j = 0; j < s; j++) {
+                if (sub_xi[j] < p) {
+                    left_xi.push_back(sub_xi[j]);
+                    left_y.push_back(sub_y[j]);
+                } else {
+                    right_xi.push_back(sub_xi[j]);
+                    right_y.push_back(sub_y[j]);
+                }
+            }
+            q_xi.push(left_xi); q_xi.push(right_xi);
+            q_y.push(left_y); q_y.push(right_y);
+            l++;
         } else {
-            right_xi.push_back(xi[j]);
-            right_y.push_back(y[j]);
+            break;
         }
+
     }
-    // std::cout << left_xi.size() << std::endl;
-    // std::cout << right_xi.size() << std::endl;
-    
-    if (wavelon_index < m_nb_wavelons) {
-        recursively_init(left_xi, left_y, t_vec, s_vec, wavelon_index + 1);
-        recursively_init(right_xi, right_y, t_vec, s_vec, wavelon_index + 1);
-    }
+
 }
 
 void WaveletNetwork::init(std::vector<Vector>& x, std::vector<double>& y) {
     int s = x.size();
     int n = x[0].getN();
     std::vector<double> xi(s);
+    std::vector<std::vector<double> > all_t;
+    std::vector<std::vector<double> > all_s;
     for (int i = 0; i < n; i++) {
         // get vector of i-nth coordinates of x
         for (int j = 0; j < s; j++) {
             xi[j] = x[j](i);
         }
-        Vector t_vec(m_nb_wavelons);
-        Vector s_vec(m_nb_wavelons);
-        recursively_init(xi, y, t_vec, s_vec, 0);
+        // insertion sort
+        std::vector<double> sorted_y = y;
+        for (int j = 0; j < s; j++) {
+            double x = xi[j];
+            double y = sorted_y[j];
+            int k = j;
+            while (k > 0 and xi[k - 1] > x) {
+                xi[k] = xi[k - 1];
+                sorted_y[k] = sorted_y[k - 1];
+                k = k - 1;
+            }
+            xi[k] = x;
+            sorted_y[k] = y;
+        }
+        std::vector<double> t_vec(m_nb_wavelons);
+        std::vector<double> s_vec(m_nb_wavelons);
+        recursively_init(xi, y, t_vec, s_vec);
+        all_t.push_back(t_vec);
+        all_s.push_back(s_vec);
     }
+    for (int l = 0; l < m_nb_wavelons; l++) {
+        Vector t(n);
+        Matrix D(n, n);
+        // std::cout << "Wavelon number " << l << std::endl;
+        for (int i = 0; i < n; i++) {
+            t(i) = all_t[i][l];
+            // std::cout << "Coordinate "  << l << " --> " << t(i) << std::endl;
+            D(i, i) = 1 / all_s[i][l];
+            // std::cout << D(i, i) << std::endl;
+        }
+        m_wavelons[l]->setT(t);
+        m_wavelons[l]->setD(D);
+    }
+    // gbar computation
+    double g_bar = 0;
+    for (int j = 0; j < s; j++) {
+        g_bar += y[j];
+    }
+    // std::cout << g_bar / s << std::endl;
+    m_bar_g = g_bar / s;
 }
 
 
