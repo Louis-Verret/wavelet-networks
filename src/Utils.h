@@ -8,4 +8,6 @@
 
 void generateData(std::vector<Vector>& x, std::vector<double>& y, int s);
 
+void generateData2(std::vector<Vector>& x, std::vector<double>& y, int s);
+
 #endif
