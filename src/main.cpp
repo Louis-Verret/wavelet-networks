@@ -15,7 +15,7 @@ int main(int argc, char **argv) {
     // std::vector<double> y_test;
     // generateData(x_test, y_test, 1000);
 
-    int nb_wavelons = 5;
+    int nb_wavelons = 49;
     int input_dim = 2;
     WaveletNetwork net(input_dim, nb_wavelons);
 
@@ -25,13 +25,16 @@ int main(int argc, char **argv) {
     std::cout << "Fitting the data" << std::endl;
     net.fit(x_train, y_train, 0.1, 500);
 
-    // Matrix A = 2 * Matrix::identity(5, 5);
+    // Matrix A(2,2);
+    // A.fillRandomly();
     // // for (int i = 0; i < 5; i++) {
     // //     for (int j = 0; j < 5; j++) {
     // //         A(i,j) = i - j;
     // //     }
     // // }
     // std::cout << A << std::endl;
-    // std::cout << A.orthogonalization() << std::endl;
+    // std::cout << A.transpose() * A << std::endl;
+    // Matrix B = A.orthogonalization();
+    // std::cout << B.transpose() * B  << std::endl;
     // return 0;
 }

@@ -33,5 +33,7 @@ void Wavelon::updateParameters(const Vector& x, const double error, const double
     m_R = m_R - learning_rate * delta_R;
     // std::cout << m_R << std::endl;
     //m_R = m_R.orthogonalization();
+    // std::cout << m_R.det() << std::endl;
+    // std::cout << m_R.transpose() * m_R << std::endl;
     // std::cout << "After projection " << m_R << std::endl;
 }

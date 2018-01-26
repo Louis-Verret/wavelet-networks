@@ -273,29 +273,38 @@ Matrix Matrix::orthogonalization() const {
     if (delta < epsilon) {
         return *this;
     }  else if (delta < 1) {
-        int k = 3;
+        int k = 5;
         for (int i = 1; i <= k; i++) {
-            T = T + std::pow(-1, i) * std::pow(i, -1/2) * Delta.pow(i);
+            T = T + std::pow(-1, i) * std::pow(i, -1.0/2.0) * Delta.pow(i);
         }
+        // std::cout << T << std::endl;
     } else {
-        double mu = std::sqrt(3 / delta);
-        T = (3 / 2) * mu * I - (1 / 2) * mu * mu * mu * S;
+        double mu = std::sqrt(3.0 / delta);
+        //std::cout << mu << std::endl;
+        T = (3.0 / 2.0) * mu * I - (1.0 / 2.0) * mu * mu * mu * S;
         sym = true;
     }
     double delta_0 = delta;
     while (delta > epsilon) {
         Matrix Z = I - T * S * T;
         delta = Z.normInf();
-        // std::cout << delta << std::endl;
+        //std::cout << delta << std::endl;
         if (delta >= delta_0) {
-            break;
+            return *this;
         }
-        T = (1 / 2) * T * (2 * I + Z);
+        T = (1.0 / 2.0) * T * (2.0 * I + Z);
         if (sym) {
-            T = (1 / 2) * (T.transpose() + T);
+            T = (1.0 / 2.0) * (T.transpose() + T);
         }
     }
     return (*this) * T;
+}
+
+double Matrix::det() const {
+    if (m_n != 2 || m_m != 2) {
+        throw std::logic_error("Invalid size for Matrix det");
+    }
+    return m_coefficients[0 * m_m + 0] * m_coefficients[1 * m_m + 1] - m_coefficients[1 * m_m + 0] * m_coefficients[0 * m_m + 1];
 }
 
 Matrix Matrix::sqrt() const {

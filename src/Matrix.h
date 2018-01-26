@@ -48,6 +48,7 @@ public:
     Matrix pow(int n) const;
     Matrix orthogonalization() const;
     double normInf() const;
+    double det() const;
 
 protected:
     int m_n;
