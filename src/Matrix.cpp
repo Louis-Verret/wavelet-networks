@@ -334,19 +334,21 @@ Matrix Matrix::log() const {
     return result;
 }
 
-Matrix Matrix::inv() const {
+Matrix Matrix::invDiag() const {
+    if (m_n != m_m) {
+        throw std::logic_error("Invalid size for Matrix invDiag");
+    }
     Matrix result(m_n, m_m);
-    int i, j;
-    #pragma omp parallel shared(result) private(i, j)
+    result.fillWithZero();
+    int i;
+    #pragma omp parallel shared(result) private(i)
     {
-        #pragma omp for collapse(2)
+        #pragma omp for
         for (i = 0; i < m_n; i++) {
-            for (j = 0; j < m_m; j++) {
-                if (m_coefficients[i* m_m +j] == 0) {
-                    throw std::logic_error("Invalid Matrix inv");
-                }
-                result(i, j) = 1.0/m_coefficients[i * m_m + j];
+            if (m_coefficients[i * m_m + i] == 0) {
+                throw std::logic_error("Invalid Matrix inv");
             }
+            result(i, i) = 1.0/m_coefficients[i * m_m + i];
         }
     }
     return result;

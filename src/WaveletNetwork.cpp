@@ -116,6 +116,7 @@ void WaveletNetwork::init(std::vector<Vector>& x, std::vector<double>& y) {
     for (int l = 0; l < m_nb_wavelons; l++) {
         Vector t(n);
         Matrix D(n, n);
+        D.fillWithZero();
         // std::cout << "Wavelon number " << l << std::endl;
         for (int i = 0; i < n; i++) {
             t(i) = all_t[i][l];
@@ -137,10 +138,11 @@ void WaveletNetwork::init(std::vector<Vector>& x, std::vector<double>& y) {
 
 
 void WaveletNetwork::fit(std::vector<Vector>& x, std::vector<double>& y, const double learning_rate, int epoch) {
+    double g;
     for (int t = 0; t<epoch; t++) {
         double mse = 0;
         for (unsigned int i = 0; i<x.size(); i++) {
-            double g = propagate(x[i]);
+            g = propagate(x[i]);
             double error = g - y[i];
             backpropagate(x[i], error, learning_rate);
             mse += std::pow(error, 2)/2.0;
@@ -148,7 +150,7 @@ void WaveletNetwork::fit(std::vector<Vector>& x, std::vector<double>& y, const d
         std::cout << "Epoch: " << t+1 << "/" << epoch << std::endl;
         std::cout << " Mean Error: " << mse/x.size() << std::endl;
     }
-    //std::cout << "Predicted/Label: " << m_a.back() << " " << batches_y[nb_batches-1] << std::endl;
+    std::cout << "Predicted/Label: " << g << " " << y[y.size()-1] << std::endl;
 }
 
 double WaveletNetwork::propagate(const Vector& x) {

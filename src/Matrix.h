@@ -42,7 +42,7 @@ public:
     static Matrix identity(int n, int m);
     Matrix sqrt() const;
     Matrix log() const;
-    Matrix inv() const;
+    Matrix invDiag() const;
     Matrix argmax() const;
     Matrix hadamardProduct(const Matrix &mat2) const;
     Matrix pow(int n) const;
