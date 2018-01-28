@@ -153,6 +153,13 @@ void WaveletNetwork::fit(std::vector<Vector>& x, std::vector<double>& y, const d
     std::cout << "Predicted/Label: " << g << " " << y[y.size()-1] << std::endl;
 }
 
+void WaveletNetwork::evaluate(std::vector<Vector>& x, std::vector<double>& y) {
+    int s = x.size();
+    for (int i = 0; i < s; i++) {
+        y[i] = propagate(x[i]);
+    }
+}
+
 double WaveletNetwork::propagate(const Vector& x) {
     double g = 0;
     for (int i = 0; i<m_nb_wavelons; i++) {

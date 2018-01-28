@@ -17,6 +17,7 @@ public:
 
     void init(std::vector<Vector>& x, std::vector<double>& y);
     void fit(std::vector<Vector>& x, std::vector<double>& y, const double learning_rate, int epoch);
+    void evaluate(std::vector<Vector>& x, std::vector<double>& y);
 
 protected:
 
