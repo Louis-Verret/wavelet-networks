@@ -10,11 +10,11 @@ int main(int argc, char **argv) {
 
     std::vector<Vector> x_train;
     std::vector<double> y_train;
-    generateData2(x_train, y_train, 300);
+    generateData3(x_train, y_train, 300);
 
     std::vector<Vector> x_test;
     std::vector<double> y_test;
-    generateData2(x_test, y_test, 400);
+    generateData3(x_test, y_test, 200);
 
     std::vector<double> y_predict(y_test.size(), 0);
 
