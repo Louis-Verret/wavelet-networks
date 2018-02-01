@@ -1,4 +1,5 @@
 #include "WaveletFunction.h"
+#include <stdexcept>
 
 WaveletFunction::WaveletFunction() {
 
@@ -22,9 +23,7 @@ Vector WaveletFunction::evalDev(const Vector& x) const {
         if (x(i) != 0) {
             gradient(i) = -(x(i) - 1.0/x(i)) * eval(x);
         } else {
-            Vector x_tmp = x;
-            x_tmp(i) = 1;
-            gradient(i) = eval(x_tmp);
+            throw std::logic_error("Invalid wavelet derivative");
         }
     }
     return gradient;
