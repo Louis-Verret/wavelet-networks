@@ -10,17 +10,17 @@ int main(int argc, char **argv) {
 
     std::vector<Vector> x_train;
     std::vector<double> y_train;
-    generateData3(x_train, y_train, 300);
+    generateData2(x_train, y_train, 300);
 
     std::vector<Vector> x_test;
     std::vector<double> y_test;
-    generateData3(x_test, y_test, 200);
+    generateData2(x_test, y_test, 400);
 
     std::vector<double> y_predict(y_test.size(), 0);
     std::vector<double> y_predict_1(y_train.size(), 0);
 
-    int nb_wavelons = 5;
-    int input_dim = 1;
+    int nb_wavelons = 49;
+    int input_dim = 2;
     WaveletNetwork net(input_dim, nb_wavelons);
 
     std::cout << "Initializing the network" << std::endl;
