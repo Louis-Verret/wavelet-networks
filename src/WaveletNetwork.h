@@ -28,7 +28,7 @@ public:
 protected:
     std::vector<Wavelon*> m_wavelons;     /* collection of wavelons of the model */
     double m_bar_g;                       /* additional parameters introduced in the paper */
-    int m_nb_wavelons;                    /* number of wavelons /*
+    int m_nb_wavelons;                    /* number of wavelons */
 
     /* Return the value computed after propagating the vector x through the network */
     double propagate(const Vector& x);

@@ -11,7 +11,7 @@ WaveletFunction::~WaveletFunction() {
 }
 
 double WaveletFunction::eval(const Vector& x) const {
-    double sigma = 0.1;
+    // double sigma = 0.1;
     double res = 1;
     for (int i = 0; i<x.getN(); i++) {
         res *= -x(i) * std::exp(-std::pow(x(i), 2)/2.0);
@@ -21,7 +21,7 @@ double WaveletFunction::eval(const Vector& x) const {
 }
 
 Vector WaveletFunction::evalDev(const Vector& x) const {
-    double sigma = 0.1;
+    // double sigma = 0.1;
     Vector gradient(x.getN());
     for (int i = 0; i<x.getN(); i++) {
         if (x(i) != 0) {
