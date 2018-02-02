@@ -32,35 +32,4 @@ int main(int argc, char **argv) {
     std::cout << "Evaluating the data" << std::endl;
     net.evaluate(x_test, y_predict);
 
-    std::ofstream file("../data/prediction_func0_test_0.1.data");
-    if (file.is_open())
-    {
-        int s = x_test.size();
-        int n = x_test[0].getN();
-        for (int i = 0; i < s; i++) {
-            for (int j = 0; j < n; j++) {
-                file << x_test[i](j) << " ";
-            }
-            file << y_predict[i] << " ";
-            file << y_test[i] << std::endl;
-        }
-        file.close();
-    }
-    else std::cout << "Unable to open file";
-
-    std::ofstream file1("../data/prediction_func0_train_0.data");
-    if (file1.is_open())
-    {
-        int s = x_train.size();
-        int n = x_train[0].getN();
-        for (int i = 0; i < s; i++) {
-            for (int j = 0; j < n; j++) {
-                file1 << x_train[i](j) << " ";
-            }
-            file1 << y_train[i] << std::endl;
-        }
-        file1.close();
-    }
-    else std::cout << "Unable to open file";
-
 }
