@@ -11,7 +11,10 @@ public:
     WaveletFunction();
     ~WaveletFunction();
 
+    /* Evaluate the wavelet function on the vector x */
     double eval(const Vector& x) const;
+
+    /* Evaluate the gradient of the wavelet function on the vector x */
     Vector evalDev(const Vector& x) const;
 
 };
