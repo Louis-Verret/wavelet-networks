@@ -1,6 +1,6 @@
 # wavelet-networks
 
-This project is an implementation of the paper of Qinghua Zhang and Albert Benveniste on wavelet networks.
+This project is an implementation of the paper of Qinghua Zhang and Albert Benveniste on wavelet networks ([link](https://ieeexplore.ieee.org/document/165591/).
 
 ## Getting started
 
